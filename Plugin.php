@@ -4,11 +4,12 @@
  * 
  * @package SmartSpam
  * @author YoviSun
- * @version 2.8.0
+ * @version 2.8.1
  * @link http://www.yovisun.com
  *
  * 历史版本
- *
+ * version 2.8.1 at 2023-12-16
+ * 修复当禁止IP列表里出现空行，会导致所有IP都被报告为禁止IP；修复当禁止词汇列表里出现空行，会导致所有内容都被报告为禁止词汇
  * version 2.8.0 at 2023-12-16
  * 修复“不设置某项拦截项，而导致该项审核无法通过”的问题。by 尚寂新
  * 
@@ -374,6 +375,7 @@ class SmartSpam_Plugin implements Typecho_Plugin_Interface
 	private static function check_in($words_str, $str)
 	{
         // 如果未设置屏蔽词，就不检测，直接通过
+        $words_str = trim($words_str); // 修复当禁止词汇列表里出现空行，会导致所有内容都被报告为禁止词汇
         if ($words_str == NULL || $words_str == "") return false;
 
 		$words = explode("\n", $words_str);
@@ -394,6 +396,7 @@ class SmartSpam_Plugin implements Typecho_Plugin_Interface
      */
 	private static function check_ip($words_ip, $ip)
 	{
+        $words_ip = trim($words_ip); // 修复当禁止IP列表里出现空行，会导致所有IP都被报告为禁止IP
 		$words = explode("\n", $words_ip);
 		if (empty($words)) {
 			return false;
