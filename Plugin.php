@@ -4,18 +4,20 @@
  * 
  * @package SmartSpam
  * @author YoviSun
- * @version 2.8.1
+ * @version 2.8.2
  * @link http://www.yovisun.com
  *
  * 历史版本
+ * 
+ * version 2.8.2 at 2024-09-19
+ * 解决高版本php8.2报错strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated的问题。by 泽泽
+ * 
  * version 2.8.1 at 2023-12-16
  * 修复当禁止IP列表里出现空行，会导致所有IP都被报告为禁止IP；修复当禁止词汇列表里出现空行，会导致所有内容都被报告为禁止词汇
  * version 2.8.0 at 2023-12-16
  * 修复“不设置某项拦截项，而导致该项审核无法通过”的问题。by 尚寂新
- * 
  * version 2.7.0 at 2021-03-08
  * 添加对游客评论的处理；新增部分代码提升同接口插件间的兼容性。 by 泽泽
- * 
  * version 2.6.0 at 2014-10-18
  * 添加对网址的检测
  * version 2.5.0 at 2014-08-30
@@ -379,7 +381,7 @@ class SmartSpam_Plugin implements Typecho_Plugin_Interface
         if ($words_str == NULL || $words_str == "") return false;
 
 		$words = explode("\n", $words_str);
-		if (empty($words)) {
+		if (empty($words)||empty($str)) {
 			return false;
 		}
 		foreach ($words as $word) {
