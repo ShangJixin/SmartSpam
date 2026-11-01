@@ -10,9 +10,9 @@
  * 历史版本
  * 
  * version 2.10.0-beta.1 at 2026-11-02
- * 统一加权判定：行为特征与历史样本合并为一条规则（单一阈值 + 双信号开关），
+ * 统一加权判定：行为特征与历史样本统一累计打分（单一阈值 + 双信号开关），
  * 样本学习支持 URL 域名 / IP 段 / 邮箱 / 昵称 / 内容近似重复，并提供学习时间窗与条目上限；
- * 新增博主评论豁免、代理 IP 还原（CDN/反代）、调试日志；移除手工广告关键词配置；
+ * 新增博主评论豁免、代理 IP 还原（CDN/反代）、调试日志；不设手工广告关键词表；
  * 安全加固：头像源 SSRF 收敛、全局 fail-open、重建加锁。by 尚寂新
  * 弱信号来源：无 Gravatar 头像、保留邮箱域名、同域名重复推广；头像检测支持多镜像按序降级，
  * 结果本地缓存 7 天并记住上次可用镜像；check_in / check_ip 兼容真实换行与字面 \n 两种存量格式。by 尚寂新
@@ -243,7 +243,7 @@ class SmartSpam_Plugin implements Typecho_Plugin_Interface
 			_t('加权判定操作'), "「行为特征」与「历史样本」的弱信号累计成总分，达到阈值时执行该操作");
         $form->addInput($opt_weight);
 
-        $weight_threshold = new Typecho_Widget_Helper_Form_Element_Text('weight_threshold', NULL, '8', '加权判定阈值', '各信号累计达到该分值才触发；合并后建议 8（原两条规则各为 6）');
+        $weight_threshold = new Typecho_Widget_Helper_Form_Element_Text('weight_threshold', NULL, '8', '加权判定阈值', '各信号累计达到该分值才触发；建议 6~8，越高越宽松');
         $weight_threshold->input->setAttribute('class', 'mini');
         $form->addInput($weight_threshold);
 
@@ -652,7 +652,7 @@ class SmartSpam_Plugin implements Typecho_Plugin_Interface
 
 
 
-		//加权判定（合并版）：行为特征 + 历史样本累计打分，达到阈值才执行
+		//加权判定（统一）：行为特征 + 历史样本累计打分，达到阈值才执行
 		$wAction = !empty($filter_set->opt_weight) ? $filter_set->opt_weight
 			: (!empty($filter_set->opt_score) ? $filter_set->opt_score : 'none');
 		if ($opt == "none" && $wAction !== 'none') {
